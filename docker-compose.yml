@@ -1,0 +1,19 @@
+services:
+  secure-web:
+    image: nginx:latest
+    container_name: mischa-web
+    restart: unless-stopped
+    ports:
+      - "443:443"
+    volumes:
+      # Map the local HTML folder to the container's web root
+      # This allows you to change the site content from outside
+      - ./html:/usr/share/nginx/html
+      
+      # Map the local config file to the container's configuration
+      # This allows you to change nginx settings from outside
+      - ./config/default.conf:/etc/nginx/conf.d/default.conf
+      
+      # Map the local certs folder to the container
+      # You will place your server and CA certs here
+      - ./certs:/etc/nginx/certs
