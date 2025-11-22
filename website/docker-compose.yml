@@ -17,3 +17,8 @@ services:
       # Map the local certs folder to the container
       # You will place your server and CA certs here
       - ./certs:/etc/nginx/certs
+      networks:
+      	- ras-network
+networks:
+  ras-network:
+    driver: bridge

@@ -7,8 +7,8 @@ map $http_upgrade $connection_upgrade {
 
 server {
     listen 443 ssl;
-    server_name [fqdn1];
-    server_name [fqdn2]; # optional
+    server_name fqdn;
+    server_name fqdn1; # optional, should be the same as the fqdn in the certificates
 
     # Server SSL Certificate and Key (The identity of this server)
     ssl_certificate     /etc/nginx/certs/server.crt;
@@ -16,11 +16,10 @@ server {
 
     # Client Certificate Verification Configuration
     # This is the CA certificate used to sign the Client Certs
-    ssl_client_certificate /etc/nginx/certs/rootCA.crt; # if using own internal CA's self-signed
+    ssl_client_certificate /etc/nginx/certs/rootCA.crt;
     
     # 'on' forces the user to present a valid certificate. 
     # If they don't, Nginx returns a 400 Bad Request error.
-    # disable this if you don't want client certificate authentication
     ssl_verify_client on;
 
     # Standard SSL hardening (Optional but recommended)
@@ -31,13 +30,17 @@ server {
     location / {
         root   /usr/share/nginx/html;
         index  index.html index.htm;
+        # Prevent caching of the text file so updates appear instantly
+        location ~ /links.txt {
+            add_header Cache-Control "no-store, no-cache, must-revalidate";
+        }
     }
 
     # Guacamole Reverse Proxy Configuration
     location /guacamole/ {
         # REPLACE 'guacamole-host' with the actual IP or container name of your Guacamole server.
         # If running in the same docker-compose, use the service name (e.g., http://guacamole:8080/guacamole/)
-        proxy_pass http://[guacamole-server]:8080/guacamole/;
+        proxy_pass http://guacamole:8080/guacamole/;
 
         # Guacamole Requirement 1: Disable buffering for real-time streaming
         proxy_buffering off;
@@ -56,10 +59,49 @@ server {
         access_log off;
     }
 
+    location /second/ {
+    	# 1. The Trailing Slash Trick
+    	# Note the slash at the end of the URL. 
+    	# This strips "/console/" from the request before sending it to the destination.
+    	proxy_pass https://host/";
+
+    	# 2. Standard Headers
+    	proxy_set_header Host $host;
+    	proxy_set_header X-Real-IP $remote_addr;
+    	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    	proxy_set_header X-Forwarded-Proto $scheme;
+
+    	# 3. Fix Redirects
+    	# If the upstream says "Go to /login", this changes it to "Go to /console/login"
+    	proxy_redirect / /second/;
+    
+    	# 4. WebSocket Support (Crucial for modern JS apps)
+    	proxy_http_version 1.1;
+    	proxy_set_header Upgrade $http_upgrade;
+    	proxy_set_header Connection "upgrade";
+
+    	# 5. (Optional) HTML Content Rewriting
+    	# Use this ONLY if the destination app uses absolute paths (e.g. src="/js/main.js") 
+    	# and you cannot change the source code of that app.
+    	# proxy_set_header Accept-Encoding ""; 
+    	# sub_filter_once off;
+    	# sub_filter_types text/html text/css text/javascript application/javascript;
+    	# sub_filter 'href="/' 'href="/console/';
+    	# sub_filter 'src="/' 'src="/console/';
+    	# sub_filter 'action="/' 'action="/console/';
+    }
+
     # Custom error page for authentication failure
-    error_page 495 496 497 =403 /403_auth_error.html;
-    location = /403_auth_error.html {
+    error_page 495 496 497 =403 /403error.html;
+    error_page 404 /404error.html; 
+
+    location = /403error.html {
+        root   /usr/share/nginx/html;
+        internal; 
+    }
+
+    location = /404error.html {
+        root   /usr/share/nginx/html;
         internal;
-        root /usr/share/nginx/html;
     }
 }
