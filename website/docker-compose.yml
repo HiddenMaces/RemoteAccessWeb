@@ -1,7 +1,7 @@
 services:
   secure-web:
     image: nginx:latest
-    container_name: mischa-web
+    container_name: mischa-web2
     restart: unless-stopped
     ports:
       - "4444:443"
