@@ -13,6 +13,10 @@ This setup is often called **Mutual TLS (mTLS)** or **2-Way SSL**
 **The Server Certificate:** Installed on your web server (Nginx/Apache). Used to encrypt traffic (HTTPS).  
 **The Client Certificate:** Installed in the user's system/browser. Used to identify the user to the server.
 
+### :skull_and_crossbones: **Security Note**
+
+If you lose the private/rootCA.key, you cannot issue new certs. If someone steals it, they can sign fake certificates for *any* website (https://www.google.com/search?q=google.com, etc.) and your browser will trust it if you installed the Root CA. Keep the root key offline or very secure.
+
 ## 
 
 ## **Prerequisites**
@@ -21,8 +25,10 @@ You will need a Linux/Unix terminal with openssl installed.
 
 Create a directory to keep your files organized:
 
-```shell
-mkdir -p ~/my-ca/{certs,private,newcerts,csr,cnf}cd ~/my-cachmod 700 private
+```bash
+mkdir -p ~/my-ca/{certs,private,newcerts,csr,cnf}
+cd ~/my-ca
+chmod 700 private
 ```
 
 ## **Create the Root CA**
@@ -34,7 +40,7 @@ The Root CA is the "trust anchor."
 This is the most sensitive file. Protect it with a strong password (-aes256).   
 Don’t loose it, or forget the password 🙂
 
-```shell
+```bash
 openssl genrsa -aes256 -out private/rootCA.key 4096
 ```
 
@@ -63,12 +69,12 @@ This is what you see in the certificate stores etc.
 It contents doesn’t matter in case of a RootCA, best practice is to enter some descriptive information about the RootCA.  
 For example: “My Internal RootCA”
 
-```shell
+```bash
 openssl req -x509 -new -nodes -key private/rootCA.key  -sha256 -days 3650 -out certs/rootCA.crt
 ```
 
 This is it.  
-You have now a signed rootCA. Keep the 2 files safe. With these 2 files you can sign any request. This means that if somebody gets an hold of those file, he could sign a certificate for [www.google.com](http://www.google.com)  
+You have now a signed rootCA. Keep the 2 files safe. With these 2 files you can sign any request. This means that if somebody gets an hold of those files, he/she could sign a certificate for [www.google.com](http://www.google.com)  
 If a system trusts your rootCA, they won’t know if they access the real [google.com](http://google.com) or a bogus one.
 
 # **Server certificates**
@@ -83,7 +89,7 @@ To use this certificate, the webserver only needs the certificate (.crt) and the
 
 We usually do *not* password protect the server key, so the web server can restart automatically. Otherwise every time you restart the server, it will ask for the password of the private key.
 
-```shell
+```bash
 openssl genrsa -out private/FQDN.key 2048
 ```
 
@@ -141,7 +147,7 @@ IP.2 = 192.168.1.50
 When the command is executed, it will ask information about the organization. The most important and mandatory information is the **Common Name (CN)**  
 This is what you see in the certificate stores etc. The contents of CN must match your server fqdn (or domain)
 
-```shell
+```bash
 openssl req -new -key private/mywebsite.key -out csr/mywebsite.csr
 ```
 
@@ -156,7 +162,7 @@ Parameters:
 
 On a system with the 2 RootCA files, you can sign the csr and create the certificate. This uses the Root CA key to sign the Server CSR.
 
-```shell
+```bash
 openssl x509 -req -in csr/fqdn.csr -CA certs/rootCA.crt -CAkey private/rootCA.key -CAcreateserial -out certs/mywebsite.crt  -days 825 -sha256 -extfile cnf/fqdn_ext.cnf
 ```
 
@@ -181,8 +187,8 @@ This certificate is for a specific user (e.g., "Alice").
 
 ### **1\. Generate the Client Key**
 
-```shell
-openssl genrsa -out private/alice.key 2048
+```bash
+openssl genrsa -out private/johndoe.key 2048
 ```
 
 Parameters:
@@ -196,8 +202,8 @@ Parameters:
 When the command is executed, it will ask information about the organization. The most important and mandatory information is the **Common Name (CN)**  
 This is what you see in the certificate stores etc. The contents of CN can match your name.
 
-```shell
-openssl req -new -key private/alice.key -out csr/alice.csr
+```bash
+openssl req -new -key private/johndoe.key -out csr/johndoe.csr
 ```
 
 Parameters:
@@ -211,8 +217,8 @@ Parameters:
 
 We do not need SANs for client certs, usually just the Common Name is enough.
 
-```shell
-openssl x509 -req -in csr/alice.csr -CA certs/rootCA.crt -CAkey private/rootCA.key -CAcreateserial -out certs/alice.crt -days 365 -sha256
+```bash
+openssl x509 -req -in csr/johndoe.csr -CA certs/rootCA.crt -CAkey private/rootCA.key -CAcreateserial -out certs/johndoe.crt -days 365 -sha256
 ```
 
 Parameters:
@@ -231,10 +237,11 @@ Parameters:
 
 This command creates a Certificate Bundle (often called a PFX or P12 file). Think of it as packing a "digital suitcase." You are taking three separate loose files (Alice's ID card, Alice's secret key, and the Authority's stamp) and locking them inside a single, password-protected file (.p12). The command will ask for a export password. You need this password when importing it in a certificate store.
 
- Why is this nessecary?  
-You cannot easily install a raw .key and .crt file into a web browser or Windows/macOS. They expect a single file that contains everything. Some servers need also a .p12 or .pfx file. For example Windows Server IIS often require this.
+**Why is this nessecary?**
+You cannot easily install a raw .key and .crt file into a web browser or Windows/macOS. They expect a single file that contains everything. 
+Some servers need also a .p12 or .pfx file. For example Windows Server IIS often require this.
 
-```shell
+```bash
 openssl pkcs12 -export -out certs/alice.p12 -inkey private/alice.key -in certs/alice.crt -certfile certs/rootCA.crt
 ```
 
@@ -253,18 +260,32 @@ Parameters:
 
 You now need to configure your web server to require these client certificates.
 
-## **Option A: Nginx Configuration**
+## **Nginx Configuration**
 
 ```
-server {    listen 443 ssl;    server_name mywebsite.local;    # 1. Server Identity    ssl_certificate     /path/to/certs/mywebsite.crt;    ssl_certificate_key /path/to/private/mywebsite.key;    # 2. Client Authentication Config    # The CA that signed the client certs    ssl_client_certificate /path/to/certs/rootCA.crt;         # 'on' forces a certificate. 'optional' asks for it but allows access without (handled in app logic)    ssl_verify_client on;     location / {        root /var/www/html;        index index.html;                # Optional: Pass the username to the backend application        fastcgi_param REMOTE_USER $ssl_client_s_dn_cn;     }}
-```
+server {
+    listen 443 ssl;
+    server_name mywebsite.local;
 
-## **Option B: Apache Configuration**
+    # 1. Server Identity
+    ssl_certificate     /path/to/certs/mywebsite.crt;
+    ssl_certificate_key /path/to/private/mywebsite.key;
 
-```
-<VirtualHost *:443>    ServerName mywebsite.local    SSLEngine on    # 1. Server Identity    SSLCertificateFile      /path/to/certs/mywebsite.crt    SSLCertificateKeyFile   /path/to/private/mywebsite.key    # 2. Client Authentication Config    SSLCACertificateFile    /path/to/certs/rootCA.crt    SSLVerifyClient         require    SSLVerifyDepth          1        DocumentRoot /var/www/html</VirtualHost>
-```
+    # 2. Client Authentication Config
+    # The CA that signed the client certs
+    ssl_client_certificate /path/to/certs/rootCA.crt;
 
+    # 'on' forces a certificate. 'optional' asks for it but allows access without (handled in app logic)
+    ssl_verify_client on;
+
+    location / {
+         root /var/www/html;
+         index index.html;
+         # Optional: Pass the username to the backend application
+         fastcgi_param REMOTE_USER $ssl_client_s_dn_cn; 
+         }
+    }
+```
 # **Browser Setup (Client Side)**
 
 If you try to visit the site now, you will get a "Connection Reset" or "400 Bad Request \- No required SSL certificate was sent" error.
@@ -285,11 +306,11 @@ To remove the "Not Secure" warning in the address bar:
 
 To actually log in:
 
-1. Copy alice.p12 to the client machine.
+1. Copy johndoe.p12 to the client machine.
 
 2. Double click the file.
 
-3. Enter the **Export Password** you created in Step 3.4.
+3. Enter the **Export Password** you created in export to p12 file.
 
 4. Restart the browser.
 
@@ -301,10 +322,7 @@ Visit https://mywebsite.local.
 
 2. The browser should popup a window asking: "Select a certificate to authenticate yourself".
 
-3. Select "alice".
+3. Select "johndoe".
 
 4. You are in\!
 
-# **Security Note**
-
-If you lose the private/rootCA.key, you cannot issue new certs. If someone steals it, they can sign fake certificates for *any* website (https://www.google.com/search?q=google.com, etc.) and your browser will trust it if you installed the Root CA. Keep the root key offline or very secure.
