@@ -1,0 +1,5 @@
+title=Ops Center HiddenMaces.nl
+email=soc-team@hiddenmaces.nl
+Guacamole, /guacamole
+S1 Console, /s1console
+ESX, /esx

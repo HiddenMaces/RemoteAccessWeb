@@ -1,10 +1,10 @@
 services:
   secure-web:
     image: nginx:latest
-    container_name: mischa-web
+    container_name: mischa-web2
     restart: unless-stopped
     ports:
-      - "443:443"
+      - "4444:443"
     volumes:
       # Map the local HTML folder to the container's web root
       # This allows you to change the site content from outside

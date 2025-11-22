@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404  Oops, not found</title>
+    <title>Security Portal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
     :root {
@@ -15,26 +16,42 @@
         }
     </style>
     <link href="web.css" rel="stylesheet">
+    
 </head>
-
 <body>
 
     <header>
         <div class="logo-container">
-            <i class="fa-brands fa-rebel"></i>
-                <span>HiddenMaces.nl:404</span>
-            <i class="fa-brands fa-rebel"></i>
+	    <i class="fa-brands fa-rebel"></i>
+            <span>Rmote Access Web</span>
+	    <i class="fa-brands fa-rebel"></i>
         </div>
     </header>
-    
+
     <main>
-        <a href="https://theuselessweb.com/" class="nav-card">
-                <h3>403<br>Access Denied</h3>
-        </a>
-        <br>Sorry, you don't have access to this website.<br>
-            Your attempt has been logged. If you believe this is an error, please contact the administrator.
-        </p>
+        <h1>My Secure <span>Gateway</span></h1>
+        <p class="subtitle">Authorized personnel only. Select a destination below to proceed to the secure environment.</p>
+
+        <div class="button-grid">
+            <a href="/guacamole" class="nav-card">
+                <i class="fa-solid fa-network-wired"></i>
+                <h3>Intranet</h3>
+            </a>
+            <a href="/s1console" class="nav-card">
+                <i class="fa-solid fa-cloud"></i>
+                <h3>OnPrem S1 Dashboard</h3>
+            </a>
+            <a href="/nuc" class="nav-card">
+                <i class="fa-solid fa-droplet"></i>
+                <h3>The Nuc</h3>
+            </a>
+            <a href="/portainer" class="nav-card">
+                <i class="fa-solid fa-droplet"></i>
+                <h3>Portainer</h3>
+            </a>
+        </div>
     </main>
+
     <footer>
         <p class="disclaimer">
             <strong>WARNING:</strong> This system is for the use of authorized users only. Individuals using this computer system without authority, or in excess of their authority, are subject to having all of their activities on this system monitored and recorded by system personnel. In the course of monitoring individuals improperly using this system, or in the course of system maintenance, the activities of authorized users may also be monitored.
@@ -42,7 +59,8 @@
         <p class="disclaimer">
             If you are not an authorized user, please exit immediately. Misuse of this resource may result in legal action.
         </p>
-        
+        <a href="mailto:admin@example.com" class="admin-contact">Contact System Administrator</a>
     </footer>
+
 </body>
 </html>

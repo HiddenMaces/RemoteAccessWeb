@@ -32,7 +32,6 @@ First time setup:
 cp config/default.conf-sample config/default.conf
 ```
 **To create the cert structure, see the README.md in certs dir.**
-[Installation](./certs/README.md)
 
 ### 2. Start Services
 Build and start both services:
