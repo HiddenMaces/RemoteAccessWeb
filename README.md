@@ -27,9 +27,8 @@ A root-level `docker-compose.yml` builds and runs service.
 
 ### 1. Create certificates
 First time setup:
-1. create the certs dir and copy config sample to nginx.conf
+1. copy config sample to nginx.conf
 ```bash
-mkdir certs
 cp config/default.conf-sample config/default.conf
 ```
 **To create the cert structure, see the README.md in certs dir.**
