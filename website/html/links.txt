@@ -1,0 +1,6 @@
+Google Search, https://google.com
+Internal Wiki, https://confluence.local
+Guacamole, /guacamole
+S1 Console, /s1console
+ESX, /esx
+SysAdmin, mailto:support@hiddenmaces.nl
