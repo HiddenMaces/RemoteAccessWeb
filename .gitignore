@@ -2,10 +2,8 @@
 website/certs/mischa.hiddenmaces.nl.crt
 website/certs/mischa.hiddenmaces.nl.key
 website/certs/rootCA.crt
+website/html/index.html
 
-# python app ignores
-downloads/
-processed_threat_ids.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -4,7 +4,7 @@ services:
     container_name: mischa-web
     restart: unless-stopped
     ports:
-      - "443:443"
+      - "4444:443"
     volumes:
       # Map the local HTML folder to the container's web root
       # This allows you to change the site content from outside
