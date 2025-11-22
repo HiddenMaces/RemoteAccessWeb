@@ -1,0 +1,43 @@
+services:
+  guacdb:
+    container_name: guacamole-db
+    image: mariadb:10.9.5
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'MariaDBrootpassword'
+      MYSQL_DATABASE: 'guacamole_db'
+      MYSQL_USER: 'guacamole_user'
+      MYSQL_PASSWORD: 'MariaDBPassword'
+    volumes:
+      - './db-data:/var/lib/mysql'
+    networks:
+      - ras-network
+  guacd:
+    container_name: guacamole-guacd
+    image: guacamole/guacd:1.4.0
+    restart: unless-stopped
+    networks:
+      - ras-network
+  guacamole:
+    container_name: guacamole
+    image: guacamole/guacamole:1.4.0
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    environment:
+      GUACD_HOSTNAME: "guacd"
+      MYSQL_HOSTNAME: "guacdb"
+      MYSQL_DATABASE: "guacamole_db"
+      MYSQL_USER: "guacamole_user"
+      MYSQL_PASSWORD: 'MariaDBPassword'
+      TOTP_ENABLED: "false"
+    networks:
+      - ras-network
+    depends_on:
+      - guacdb
+      - guacd
+volumes:
+  db-data:
+networks:
+  ras-network:
+    driver: bridge

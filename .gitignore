@@ -1,7 +1,7 @@
 # repo ignores
-certs/mischa.hiddenmaces.nl.crt
-certs/mischa.hiddenmaces.nl.key
-certs/rootCA.crt
+website/certs/mischa.hiddenmaces.nl.crt
+website/certs/mischa.hiddenmaces.nl.key
+website/certs/rootCA.crt
 
 # python app ignores
 downloads/
