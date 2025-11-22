@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading Gateway...</title>
     <style>
-        /* SentinelOne Inspired Theme */
         :root {
             --bg-dark: #0b0b15;
             --bg-panel: #151525;
@@ -29,6 +28,7 @@
             background: radial-gradient(circle at top center, #2a1b4e 0%, var(--bg-dark) 70%);
             border-bottom: 1px solid #2d2d45;
         }
+        /* Added ID for JS targeting */
         .hero h1 { font-size: 3rem; margin: 0; letter-spacing: -1px; }
         .hero p { color: var(--text-gray); font-size: 1.2rem; margin-top: 15px; }
 
@@ -64,7 +64,7 @@
 
         /* Footer */
         footer {
-            margin-top: auto; /* Pushes footer to bottom */
+            margin-top: auto; 
             padding: 30px;
             color: var(--text-gray);
             font-size: 0.9rem;
@@ -85,7 +85,7 @@
 <body>
 
     <div class="hero">
-        <h1>Operational Gateway</h1>
+        <h1 id="page-title">Operational Gateway</h1>
         <p>Secure Proxy & Access Point. Systems Normal.</p>
     </div>
 
@@ -93,11 +93,10 @@
         </div>
 
     <footer>
-        System v1.2 | Contact Support: <a id="dynamic-email" class="footer-link" href="#">Loading...</a>
+        System v1.3 | Contact Support: <a id="dynamic-email" class="footer-link" href="#">Loading...</a>
     </footer>
 
     <script>
-        // Fetch the text file from the server
         fetch('links.txt')
             .then(response => response.text())
             .then(text => {
@@ -106,12 +105,19 @@
 
                 lines.forEach(line => {
                     const cleanLine = line.trim();
-                    if (!cleanLine) return; // Skip empty lines
+                    if (!cleanLine) return;
 
-                    // 1. Check for TITLE
+                    // 1. Check for TITLE (Updates Tab Name AND Page Header)
                     if (cleanLine.startsWith('title=')) {
                         const newTitle = cleanLine.replace('title=', '').trim();
+                        
+                        // Set Browser Tab
                         document.title = newTitle;
+                        
+                        // Set Page H1
+                        const h1 = document.getElementById('page-title');
+                        if (h1) h1.innerText = newTitle;
+                        
                         return;
                     }
 
@@ -119,12 +125,14 @@
                     if (cleanLine.startsWith('email=')) {
                         const email = cleanLine.replace('email=', '').trim();
                         const emailEl = document.getElementById('dynamic-email');
-                        emailEl.innerText = email;
-                        emailEl.href = 'mailto:' + email;
+                        if (emailEl) {
+                            emailEl.innerText = email;
+                            emailEl.href = 'mailto:' + email;
+                        }
                         return;
                     }
 
-                    // 3. Render BUTTONS (if line has a comma)
+                    // 3. Render BUTTONS
                     const parts = cleanLine.split(',');
                     if (parts.length >= 2) {
                         const title = parts[0].trim();
