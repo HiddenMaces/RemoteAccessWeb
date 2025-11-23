@@ -3,6 +3,7 @@ website/certs/mischa.hiddenmaces.nl.crt
 website/certs/mischa.hiddenmaces.nl.key
 website/certs/rootCA.crt
 website/html/links.txt
+guacamole/db-data/
 
 
 # Byte-compiled / optimized / DLL files
