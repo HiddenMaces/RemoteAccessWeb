@@ -1,7 +1,3 @@
 include:
   - website/docker-compose.yaml # the frontend env
   - guacamole/docker-compose.yaml # guacamole env
-
-networks:
-  ras-network:
-    driver: bridge

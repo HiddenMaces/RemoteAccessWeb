@@ -1,5 +1,6 @@
 title=Ops Center HiddenMaces.nl
 email=soc-team@hiddenmaces.nl
 Guacamole, /guacamole
-S1 Console, /s1console
-ESX, /esx
+S1 Console, /s1console/
+Portainer, /portainer/
+Portainer2, https://192.168.1.192:9443
