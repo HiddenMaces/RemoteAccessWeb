@@ -1,16 +1,8 @@
 # Remote Access to your home systems
 
-This repository contains a simple nginx setup
-The NGINX config is the most important part.
-
-It contains 2 types of config
-1. initial website which contains the links to the different internal systems
-2. reverse-proxy config for the internal systems
-
-It assumes you have a working Apache Guacamole system.
-It can be another system or locally via docker
-
+This repository contains 2 services to enable a frontend and a guacamole setup.
 A root-level `docker-compose.yml` builds and runs service.
+Every service has a docker-compose.yaml to start it seperatly.
 
 ## Prerequisites
 - Docker installed
@@ -18,20 +10,47 @@ A root-level `docker-compose.yml` builds and runs service.
 - Terminal access
 
 ## Project Structure
-- `certs`: Holds all the necessary certificate files, at least server.crt and server.key for the website.
-- `config`: Holds the nginx config file
-- `html`: Holds the index.html and error file 403 access denied and 404 not found.
-- `docker-compose.yml`: builds the service
+RemoteAccessWeb/
+├── docker-compose.yaml     <-- start all the services
+├── init_guac_db.sh         <-- initial setup for guacamole
+├── certificates.sh         <-- setup rootca and signing user certificates
+├── guacamole/
+    ├── db-data/            <-- guacamole db (will be created by starting container)
+    ├── docker-compose.yml  <-- to start guacamole seperatly
+    └── initdb.sql          <-- initial db to add to guacamole db
+├── website/
+    ├── certs/              <-- to hold all the certs
+    ├── config/             <-- nginx config dir
+        └── default.conf    <-- nginx configuration 
+    └── html/
+        ├── links.txt       <-- contents for index.html
+        ├── 403error.html   <-- access denied page
+        ├── 404error.html   <-- not found page
+        └── index.html      <-- the dashboard
 
 ## Quick Start
 
-### 1. Create certificates
+### 1. Create guacamole initial db
 First time setup:
 1. copy config sample to nginx.conf
 ```bash
-cp config/default.conf-sample config/default.conf
+chmod +x ./init_guac_db.sh
+./init_guac_db.sh
 ```
-**To create the cert structure, see the README.md in certs dir.**
+The guacamole db is created and de tables are added
+
+2. create the nessecary certificates.
+The script `certificates.sh` will create the rootCA.crt and key. These will be used to create and sign the server.crt and key.
+If not supplied on the commandline, the necessary information will be asked.
+
+You can also look in [Certificates
+
+```bash
+chmod +x ./certificates.sh
+./certificates create --rootca --cn "[desired display text]"
+./certificates create --server --cn "[fqdn]"
+```
+
 
 ### 2. Start Services
 Build and start both services:
@@ -44,3 +63,4 @@ docker compose up -d
 ```bash
 docker compose down
 ```
+
