@@ -41,16 +41,7 @@ chmod +x ./init_guac_db.sh
 The guacamole db is created and de tables are added
 
 2. create the nessecary certificates.
-The script `certificates.sh` will create the rootCA.crt and key. These will be used to create and sign the server.crt and key.
-If not supplied on the commandline, the necessary information will be asked.
-
-You can also look in [Certificates
-
-```bash
-chmod +x ./certificates.sh
-./certificates create --rootca --cn "[desired display text]"
-./certificates create --server --cn "[fqdn]"
-```
+Following the README_certificates.md for creating the self-signed certificates
 
 ### 2. Start Services
 Build and start both services, in the root of the project
