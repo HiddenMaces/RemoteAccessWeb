@@ -40,10 +40,10 @@ chmod +x ./init_guac_db.sh
 ```
 The guacamole db is created and de tables are added
 
-2. create the nessecary certificates.
+### 2. create the nessecary certificates.
 Following the README_certificates.md for creating the self-signed certificates
 
-### 2. Start Services
+### 3. Start Services
 Build and start both services, in the root of the project
 ```bash
 docker compose up -d
@@ -52,9 +52,9 @@ after succesfull creation and startup you can check the services individual.
 
 **website: https://fqdn**
 
-**guacamole: https://fqdn:8080**
+**guacamole: https://fqdn:8080/guacamole**
 
-### 3. Stop Services
+### 4. Stop Services
 ```bash
 docker compose down
 ```
