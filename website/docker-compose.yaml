@@ -1,0 +1,18 @@
+services:
+  ras-web:
+    image: nginx:latest
+    container_name: ras-web
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+      - ./config/default.conf:/etc/nginx/conf.d/default.conf
+      - ./certs:/etc/nginx/certs
+    networks:
+      - ras-network
+
+networks:
+  ras-network:
+    driver: bridge

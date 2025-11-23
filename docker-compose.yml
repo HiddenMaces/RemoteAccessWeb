@@ -1,7 +1,0 @@
-include:
-  - guacamole/docker-compose.yml
-  - website/docker-compose.yml
-
-networks:
-  ras-network:
-    driver: bridge
