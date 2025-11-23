@@ -10,6 +10,7 @@ Every service has a docker-compose.yaml to start it seperatly.
 - Terminal access
 
 ## Project Structure
+```
 RemoteAccessWeb/
 ├── docker-compose.yaml     <-- start all the services
 ├── init_guac_db.sh         <-- initial setup for guacamole
@@ -27,7 +28,7 @@ RemoteAccessWeb/
         ├── 403error.html   <-- access denied page
         ├── 404error.html   <-- not found page
         └── index.html      <-- the dashboard
-
+```
 ## Quick Start
 
 ### 1. Create guacamole initial db
