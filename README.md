@@ -52,16 +52,18 @@ chmod +x ./certificates.sh
 ./certificates create --server --cn "[fqdn]"
 ```
 
-
 ### 2. Start Services
-Build and start both services:
+Build and start both services, in the root of the project
 ```bash
 docker compose up -d
 ```
-- **Website**: http://localhost | https://localhost
+after succesfull creation and startup you can check the services individual.
+
+**website: https://fqdn**
+
+**guacamole: https://fqdn:8080**
 
 ### 3. Stop Services
 ```bash
 docker compose down
 ```
-
