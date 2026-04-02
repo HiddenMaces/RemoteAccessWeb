@@ -1,0 +1,4 @@
+title=Your title
+email=admin@email
+site1, /site1/
+url1, https://url1
