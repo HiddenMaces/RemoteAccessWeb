@@ -31,7 +31,6 @@ venv/
 env/
 .venv/
 .env
-.env.*
 
 # Installer logs
 pip-log.txt
