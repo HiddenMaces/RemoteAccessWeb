@@ -1,60 +1,62 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>403 Oops, access denied</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-<style>
+    <title>403 — Access Denied</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
         :root {
-            --s1-purple: #6B1CB0;
-            --s1-dark-purple: #2D0A4E;
-            --s1-black: #0E0E18;
-            --s1-text: #FFFFFF;
-            --s1-accent: #00C7F2; /* Cyan accent */
-            --s1-gray: #8F9BB3;
+            --bg:     #0E0E18;
+            --purple: #6B1CB0;
+            --cyan:   #00C7F2;
+            --text:   #FFFFFF;
+            --gray:   #8F9BB3;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--s1-black);
-            color: var(--s1-text);
+            background: var(--bg);
+            color: var(--text);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(107, 28, 176, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 199, 242, 0.1) 0%, transparent 40%);
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(107,28,176,0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0,199,242,0.1)  0%, transparent 40%);
         }
 
-        /* Header / Logo Area */
         header {
-            padding: 2rem;
+            padding: 1.75rem 2rem;
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
         }
 
-        .logo-container {
+        .logo {
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 1.8rem;
-            font-weight: 600;
-            letter-spacing: 1px;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
         }
 
-        .logo-icon {
-            color: var(--s1-purple);
-            font-size: 2.2rem;
+        .logo-mark {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--cyan) 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Main Content */
+        .logo-name span { color: var(--cyan); }
+
         main {
             flex: 1;
             display: flex;
@@ -65,131 +67,79 @@
             text-align: center;
         }
 
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            font-weight: 300;
+        .error-icon {
+            font-size: 4rem;
+            color: var(--purple);
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
         }
 
-        h1 span {
-            color: var(--s1-purple);
+        h1 {
+            font-size: 4rem;
             font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1;
+            margin-bottom: 0.5rem;
         }
+
+        h1 span { color: var(--purple); }
 
         .subtitle {
-            color: var(--s1-gray);
-            margin-bottom: 4rem;
-            font-size: 1.2rem;
-            max-width: 600px;
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        .detail {
+            color: var(--gray);
+            font-size: 0.875rem;
+            max-width: 480px;
             line-height: 1.6;
         }
 
-        /* Buttons Grid */
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .nav-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            color: var(--s1-text);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .nav-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--s1-purple);
-            box-shadow: 0 10px 30px -10px rgba(107, 28, 176, 0.5);
-        }
-
-        .nav-card i {
-            font-size: 2.5rem;
-            color: var(--s1-accent);
-            margin-bottom: 10px;
-        }
-
-        .nav-card h3 {
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-
-        .nav-card span {
-            font-size: 0.9rem;
-            color: var(--s1-gray);
-        }
-
-        /* Footer */
         footer {
-            padding: 2rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            background: rgba(0,0,0,0.2);
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(0, 0, 0, 0.2);
         }
 
         .disclaimer {
-            color: var(--s1-gray);
-            font-size: 0.85rem;
-            max-width: 800px;
-            margin: 0 auto 10px auto;
+            color: var(--gray);
+            font-size: 0.78rem;
+            max-width: 780px;
+            margin: 0 auto 0.5rem;
             line-height: 1.5;
-        }
-
-        .admin-contact {
-            color: var(--s1-accent);
-            font-size: 0.9rem;
-            text-decoration: none;
-        }
-
-        .admin-contact:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            .button-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-
 <body>
 
-    <header>
-        <div class="logo-container">
-            <i class="fa-brands fa-rebel"></i>
-                <span>Access Denied! :403:</span>
-            <i class="fa-brands fa-rebel"></i>
-        </div>
-    </header>
-    
-    <main>
-        <a href="https://theuselessweb.com/" class="nav-card">
-                <h3>403<br>Access Denied</h3>
-        </a>
-        <br>Sorry, you don't have access to this website.<br>
-            Your attempt has been logged. If you believe this is an error, please contact the administrator.
-        </p>
-    </main>
-    <footer>
-        <p class="disclaimer">
-            <strong>WARNING:</strong> This system is for the use of authorized users only. Individuals using this computer system without authority, or in excess of their authority, are subject to having all of their activities on this system monitored and recorded by system personnel. In the course of monitoring individuals improperly using this system, or in the course of system maintenance, the activities of authorized users may also be monitored.
-        </p>
-        <p class="disclaimer">
-            If you are not an authorized user, please exit immediately. Misuse of this resource may result in legal action.
-        </p>
-        
-    </footer>
+<header>
+    <div class="logo">
+        <div class="logo-mark"><i class="fa-solid fa-shield-halved" style="color:#fff"></i></div>
+        <div class="logo-name">SENTINEL<span>ONE</span></div>
+    </div>
+</header>
+
+<main>
+    <div class="error-icon"><i class="fa-solid fa-ban"></i></div>
+    <h1><span>403</span></h1>
+    <p class="subtitle">Access Denied</p>
+    <p class="detail">
+        You don't have a valid client certificate to access this system.
+        Your attempt has been logged. If you believe this is an error, contact the administrator.
+    </p>
+</main>
+
+<footer>
+    <p class="disclaimer">
+        <strong>WARNING:</strong> This system is for authorised users only. Individuals using this system without
+        authority, or in excess of their authority, are subject to having all of their activities monitored and
+        recorded. Misuse of this resource may result in legal action.
+    </p>
+</footer>
+
 </body>
 </html>

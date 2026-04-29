@@ -3,157 +3,989 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Gateway...</title>
+    <title>Operational Gateway</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #0b0b15;
-            --bg-panel: #151525;
-            --accent-purple: #6816f0;
-            --text-white: #ffffff;
-            --text-gray: #aeb4b9;
-            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --bg:          #0E0E18;
+            --bg-panel:    #13131F;
+            --bg-card:     rgba(255,255,255,0.03);
+            --border:      rgba(255,255,255,0.08);
+            --purple:      #6B1CB0;
+            --purple-dim:  rgba(107,28,176,0.15);
+            --purple-lite: #8B2FD0;
+            --cyan:        #00C7F2;
+            --cyan-dim:    rgba(0,199,242,0.08);
+            --text:        #FFFFFF;
+            --subtext:     #8F9BB3;
+            --danger:      #EF4444;
+            --success:     #10B981;
+            --font:        'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --radius:      8px;
+            --ease:        0.18s ease;
         }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0; padding: 0;
-            background-color: var(--bg-dark);
-            color: var(--text-white);
-            font-family: var(--font-main);
-            display: flex; flex-direction: column;
-            align-items: center; min-height: 100vh;
-        }
-        
-        /* Header */
-        .hero {
-            width: 100%; text-align: center; padding: 80px 20px;
-            background: radial-gradient(circle at top center, #2a1b4e 0%, var(--bg-dark) 70%);
-            border-bottom: 1px solid #2d2d45;
-        }
-        /* Added ID for JS targeting */
-        .hero h1 { font-size: 3rem; margin: 0; letter-spacing: -1px; }
-        .hero p { color: var(--text-gray); font-size: 1.2rem; margin-top: 15px; }
-
-        /* Grid */
-        .container {
-            max-width: 1000px; width: 100%; padding: 60px 20px;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image:
+                radial-gradient(circle at 12% 18%, rgba(107,28,176,0.13) 0%, transparent 46%),
+                radial-gradient(circle at 88% 82%, rgba(0,199,242,0.07) 0%, transparent 42%);
         }
 
-        /* Cards */
-        .link-card {
-            background-color: var(--bg-panel);
-            border: 1px solid #2d2d45;
-            padding: 25px; border-radius: 4px;
-            text-decoration: none; color: var(--text-white);
-            transition: all 0.3s ease;
-            display: flex; justify-content: space-between; align-items: center;
-            position: relative; overflow: hidden;
+        /* ── Header ─────────────────────────────────────────── */
+        header {
+            height: 60px;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.35);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .link-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--accent-purple);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-        }
-        .link-card::before {
-            content: ''; position: absolute; left: 0; top: 0;
-            height: 100%; width: 4px; background-color: var(--accent-purple);
-            opacity: 0; transition: opacity 0.3s;
-        }
-        .link-card:hover::before { opacity: 1; }
-        .arrow { color: var(--accent-purple); font-weight: bold; }
 
-        /* Footer */
-        footer {
-            margin-top: auto; 
-            padding: 30px;
-            color: var(--text-gray);
-            font-size: 0.9rem;
-            text-align: center;
-            border-top: 1px solid #2d2d45;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            user-select: none;
+        }
+
+        .logo-mark {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--cyan) 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .logo-name span { color: var(--cyan); }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .edit-badge {
+            display: none;
+            background: var(--purple-dim);
+            border: 1px solid var(--purple);
+            color: var(--purple-lite);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            padding: 3px 7px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+
+        body.edit-mode .edit-badge { display: inline-block; }
+
+        .icon-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--subtext);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: all var(--ease);
+        }
+
+        .icon-btn:hover { border-color: var(--purple); color: var(--text); background: var(--purple-dim); }
+        .icon-btn.on { border-color: var(--purple); color: var(--purple-lite); background: var(--purple-dim); }
+
+        /* ── Main ───────────────────────────────────────────── */
+        main {
+            flex: 1;
+            padding: 2.5rem 2rem;
+            max-width: 1280px;
             width: 100%;
-            box-sizing: border-box;
+            margin: 0 auto;
         }
-        
-        .footer-link {
-            color: var(--accent-purple);
+
+        .page-intro { margin-bottom: 2rem; }
+
+        .page-intro h1 {
+            font-size: 1.75rem;
+            font-weight: 300;
+            letter-spacing: -0.3px;
+        }
+
+        .page-intro h1 strong { font-weight: 700; }
+
+        .page-intro p {
+            margin-top: 4px;
+            color: var(--subtext);
+            font-size: 0.85rem;
+        }
+
+        /* ── Tile grid ──────────────────────────────────────── */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 14px;
+        }
+
+        /* ── Tile ───────────────────────────────────────────── */
+        .tile {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.4rem 1.4rem 1.2rem;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: all var(--ease);
+            overflow: hidden;
+            cursor: pointer;
             text-decoration: none;
-            font-weight: 600;
         }
-        .footer-link:hover { text-decoration: underline; }
+
+        .tile::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, var(--purple-dim) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity var(--ease);
+            pointer-events: none;
+        }
+
+        .tile:hover {
+            border-color: rgba(107,28,176,0.55);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(107,28,176,0.18);
+        }
+
+        .tile:hover::after { opacity: 1; }
+
+        .tile-bar {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--purple) 0%, var(--cyan) 100%);
+            opacity: 0;
+            transition: opacity var(--ease);
+        }
+
+        .tile:hover .tile-bar { opacity: 1; }
+
+        .tile-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .tile-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        .tile-arrow {
+            color: var(--cyan);
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+            opacity: 0;
+            transition: opacity var(--ease), transform var(--ease);
+        }
+
+        .tile:hover .tile-arrow { opacity: 1; transform: translateX(2px); }
+
+        .tile-desc {
+            color: var(--subtext);
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        .tile-url {
+            margin-top: 4px;
+            color: rgba(139,47,208,0.7);
+            font-size: 0.72rem;
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Edit mode overlay controls */
+        .tile-actions {
+            display: none;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            gap: 4px;
+            z-index: 5;
+        }
+
+        body.edit-mode .tile-actions { display: flex; }
+
+        .tile-act {
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: all var(--ease);
+        }
+
+        .tile-act.edit-btn {
+            background: rgba(107,28,176,0.25);
+            color: var(--purple-lite);
+        }
+
+        .tile-act.edit-btn:hover { background: rgba(107,28,176,0.55); color: #fff; }
+
+        .tile-act.del-btn {
+            background: rgba(239,68,68,0.18);
+            color: var(--danger);
+        }
+
+        .tile-act.del-btn:hover { background: rgba(239,68,68,0.45); color: #fff; }
+
+        /* Drag handle */
+        .drag-handle {
+            display: none;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: var(--subtext);
+            font-size: 0.75rem;
+            opacity: 0.35;
+            cursor: grab;
+            z-index: 5;
+        }
+
+        body.edit-mode .drag-handle { display: block; }
+        body.edit-mode .tile { cursor: default; }
+
+        .tile.dragging { opacity: 0.35; border-style: dashed; }
+        .tile.drag-over { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(0,199,242,0.3); }
+
+        /* Add tile */
+        .tile-add {
+            border-style: dashed;
+            border-color: rgba(107,28,176,0.35);
+            background: transparent;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            color: var(--subtext);
+            min-height: 110px;
+            cursor: pointer;
+        }
+
+        .tile-add i { font-size: 1.4rem; color: rgba(107,28,176,0.5); transition: color var(--ease); }
+        .tile-add span { font-size: 0.82rem; }
+
+        .tile-add:hover {
+            border-color: var(--purple);
+            background: var(--purple-dim);
+            color: var(--text);
+            transform: translateY(-2px);
+        }
+
+        .tile-add:hover i { color: var(--purple-lite); }
+
+        body.edit-mode .tile-add { display: flex; }
+
+        /* ── Empty / Loading / Error states ────────────────── */
+        .state-box {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+            padding: 4rem;
+            color: var(--subtext);
+            text-align: center;
+        }
+
+        .state-box i { font-size: 2.5rem; opacity: 0.25; }
+        .state-box p { font-size: 0.9rem; line-height: 1.6; }
+
+        .state-box.error {
+            background: rgba(239,68,68,0.06);
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: var(--radius);
+            color: #f87171;
+            flex-direction: row;
+            padding: 1.25rem 1.5rem;
+            gap: 10px;
+        }
+
+        .state-box.error i { opacity: 1; font-size: 1.1rem; }
+
+        .spinner-ring {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border);
+            border-top-color: var(--purple);
+            border-radius: 50%;
+            animation: spin 0.65s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Modal ──────────────────────────────────────────── */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.72);
+            backdrop-filter: blur(5px);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .overlay.open { display: flex; }
+
+        .modal {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 460px;
+            overflow: hidden;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.65);
+            animation: pop-in 0.18s ease;
+        }
+
+        @keyframes pop-in {
+            from { opacity: 0; transform: scale(0.94) translateY(-8px); }
+            to   { opacity: 1; transform: scale(1)    translateY(0);    }
+        }
+
+        .modal-head {
+            padding: 1.1rem 1.4rem;
+            background: linear-gradient(120deg, rgba(107,28,176,0.2) 0%, rgba(0,199,242,0.04) 100%);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-head h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-head h2 i { color: var(--cyan); }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--subtext);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: color var(--ease);
+        }
+
+        .close-btn:hover { color: var(--text); }
+
+        .modal-body {
+            padding: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 5px; }
+
+        .field label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--subtext);
+        }
+
+        .field input,
+        .field textarea {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.9rem;
+            padding: 0.55rem 0.8rem;
+            outline: none;
+            transition: border-color var(--ease), box-shadow var(--ease);
+            width: 100%;
+        }
+
+        .field input::placeholder,
+        .field textarea::placeholder { color: rgba(143,155,179,0.5); }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(107,28,176,0.14);
+        }
+
+        .field textarea { resize: vertical; min-height: 68px; }
+
+        .modal-foot {
+            padding: 0.9rem 1.4rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 0.45rem 1.1rem;
+            border-radius: 6px;
+            border: none;
+            font-family: var(--font);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--ease);
+        }
+
+        .btn-ghost {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--subtext);
+        }
+
+        .btn-ghost:hover { background: rgba(255,255,255,0.09); color: var(--text); }
+
+        .btn-primary { background: var(--purple); color: #fff; }
+        .btn-primary:hover { background: var(--purple-lite); }
+
+        .btn-danger {
+            background: rgba(239,68,68,0.12);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover { background: rgba(239,68,68,0.28); }
+
+        /* ── Confirm dialog ─────────────────────────────────── */
+        .confirm-box {
+            background: var(--bg-panel);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.65);
+            animation: pop-in 0.18s ease;
+        }
+
+        .confirm-box .warn-icon { font-size: 2.2rem; color: var(--danger); margin-bottom: 1rem; }
+        .confirm-box h3 { margin-bottom: 0.5rem; font-size: 1rem; }
+        .confirm-box p { color: var(--subtext); font-size: 0.85rem; margin-bottom: 1.5rem; line-height: 1.5; }
+        .confirm-acts { display: flex; gap: 8px; justify-content: center; }
+
+        /* ── Toast ──────────────────────────────────────────── */
+        #toasts {
+            position: fixed;
+            bottom: 1.25rem;
+            right: 1.25rem;
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.65rem 1rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+            animation: slide-in 0.25s ease;
+        }
+
+        .toast.ok  { border-color: rgba(16,185,129,0.4); }
+        .toast.ok  i { color: var(--success); }
+        .toast.err { border-color: rgba(239,68,68,0.4); }
+        .toast.err i { color: var(--danger); }
+
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateX(14px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ── Footer ─────────────────────────────────────────── */
+        footer {
+            padding: 1.25rem 2rem;
+            border-top: 1px solid var(--border);
+            background: rgba(0,0,0,0.22);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--subtext);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .footer-email { color: var(--cyan); text-decoration: none; }
+        .footer-email:hover { text-decoration: underline; }
+
+        /* ── Responsive ─────────────────────────────────────── */
+        @media (max-width: 580px) {
+            header { padding: 0 1rem; }
+            main   { padding: 1.5rem 1rem; }
+            footer { flex-direction: column; text-align: center; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="hero">
-        <h1 id="page-title">Operational Gateway</h1>
-        <p>Secure Proxy & Access Point. Systems Normal.</p>
+<!-- Header -->
+<header>
+    <div class="logo">
+        <div class="logo-mark"><i class="fa-solid fa-shield-halved" style="color:#fff"></i></div>
+        <div class="logo-name">SENTINEL<span>ONE</span></div>
     </div>
+    <div class="header-right">
+        <span class="edit-badge">Edit Mode</span>
+        <button class="icon-btn" id="btn-settings" title="Settings"><i class="fa-solid fa-gear"></i></button>
+        <button class="icon-btn" id="btn-edit"     title="Toggle edit mode"><i class="fa-solid fa-pen-to-square"></i></button>
+    </div>
+</header>
 
-    <div class="container" id="button-container">
+<!-- Main content -->
+<main>
+    <div class="page-intro">
+        <h1><strong id="page-title">Operational Gateway</strong></h1>
+        <p id="page-sub">Secure Access Point — Systems Nominal</p>
+    </div>
+    <div class="grid" id="grid">
+        <div class="state-box">
+            <div class="spinner-ring"></div>
+            <p>Loading&hellip;</p>
         </div>
+    </div>
+</main>
 
-    <footer>
-        System v1.3 | Contact Support: <a id="dynamic-email" class="footer-link" href="#">Loading...</a>
-    </footer>
+<!-- Footer -->
+<footer>
+    <span>Remote Access Gateway &mdash; v2.0</span>
+    <a id="footer-email" class="footer-email" style="display:none" href="#">
+        <i class="fa-solid fa-envelope" style="margin-right:5px"></i>
+        <span id="footer-email-txt"></span>
+    </a>
+</footer>
 
-    <script>
-        fetch('links.txt')
-            .then(response => response.text())
-            .then(text => {
-                const container = document.getElementById('button-container');
-                const lines = text.split('\n');
+<!-- Link modal -->
+<div class="overlay" id="link-overlay">
+    <div class="modal">
+        <div class="modal-head">
+            <h2 id="link-modal-title"><i class="fa-solid fa-link"></i>Add Link</h2>
+            <button class="close-btn" data-close="link-overlay"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="field">
+                <label>Label *</label>
+                <input id="f-label" type="text" placeholder="e.g. Guacamole" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label>URL *</label>
+                <input id="f-url" type="text" placeholder="e.g. /guacamole/ or https://example.com" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label>Description</label>
+                <textarea id="f-desc" placeholder="Optional short description&hellip;"></textarea>
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-ghost" data-close="link-overlay">Cancel</button>
+            <button class="btn btn-primary" id="link-save">Save</button>
+        </div>
+    </div>
+</div>
 
-                lines.forEach(line => {
-                    const cleanLine = line.trim();
-                    if (!cleanLine) return;
+<!-- Settings modal -->
+<div class="overlay" id="settings-overlay">
+    <div class="modal">
+        <div class="modal-head">
+            <h2><i class="fa-solid fa-sliders"></i>Settings</h2>
+            <button class="close-btn" data-close="settings-overlay"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="field">
+                <label>Page Title</label>
+                <input id="s-title" type="text" placeholder="Operational Gateway" />
+            </div>
+            <div class="field">
+                <label>Contact Email</label>
+                <input id="s-email" type="email" placeholder="admin@example.com" />
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-ghost" data-close="settings-overlay">Cancel</button>
+            <button class="btn btn-primary" id="settings-save">Save</button>
+        </div>
+    </div>
+</div>
 
-                    // 1. Check for TITLE (Updates Tab Name AND Page Header)
-                    if (cleanLine.startsWith('title=')) {
-                        const newTitle = cleanLine.replace('title=', '').trim();
-                        
-                        // Set Browser Tab
-                        document.title = newTitle;
-                        
-                        // Set Page H1
-                        const h1 = document.getElementById('page-title');
-                        if (h1) h1.innerText = newTitle;
-                        
-                        return;
-                    }
+<!-- Delete confirm -->
+<div class="overlay" id="confirm-overlay">
+    <div class="confirm-box">
+        <div class="warn-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <h3>Delete Tile</h3>
+        <p>Delete <strong id="confirm-label"></strong>?<br>This cannot be undone.</p>
+        <div class="confirm-acts">
+            <button class="btn btn-ghost" data-close="confirm-overlay">Cancel</button>
+            <button class="btn btn-danger" id="confirm-del">Delete</button>
+        </div>
+    </div>
+</div>
 
-                    // 2. Check for EMAIL
-                    if (cleanLine.startsWith('email=')) {
-                        const email = cleanLine.replace('email=', '').trim();
-                        const emailEl = document.getElementById('dynamic-email');
-                        if (emailEl) {
-                            emailEl.innerText = email;
-                            emailEl.href = 'mailto:' + email;
-                        }
-                        return;
-                    }
+<!-- Toasts -->
+<div id="toasts"></div>
 
-                    // 3. Render BUTTONS
-                    const parts = cleanLine.split(',');
-                    if (parts.length >= 2) {
-                        const title = parts[0].trim();
-                        const url = parts[1].trim();
+<script>
+'use strict';
 
-                        if (title && url) {
-                            const a = document.createElement('a');
-                            a.className = 'link-card';
-                            a.href = url;
-                            if(url.startsWith('http')) { a.target = "_blank"; }
+// ── State ────────────────────────────────────────────────────────
+let links      = [];
+let editMode   = false;
+let editingId  = null;
+let deletingId = null;
+let dragSrc    = null;
 
-                            a.innerHTML = `
-                                <span class="link-title">${title}</span>
-                                <span class="arrow">→</span>
-                            `;
-                            container.appendChild(a);
-                        }
-                    }
-                });
-            })
-            .catch(err => console.error('Error loading links:', err));
-    </script>
+// ── Helpers ──────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function esc(s) {
+    return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg, type = 'ok') {
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.innerHTML = `<i class="fa-solid fa-${type === 'ok' ? 'circle-check' : 'circle-exclamation'}"></i> ${esc(msg)}`;
+    $('toasts').appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
+
+async function api(method, path, body) {
+    const res = await fetch(path, {
+        method,
+        headers: body ? { 'Content-Type': 'application/json' } : {},
+        body:    body ? JSON.stringify(body) : undefined,
+    });
+    if (!res.ok) throw new Error(`${method} ${path} → ${res.status}`);
+    if (res.status === 204) return null;
+    return res.json();
+}
+
+// ── Modal helpers ────────────────────────────────────────────────
+function openOverlay(id)  { $(id).classList.add('open'); }
+function closeOverlay(id) { $(id).classList.remove('open'); }
+
+document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => closeOverlay(btn.dataset.close));
+});
+
+['link-overlay','settings-overlay','confirm-overlay'].forEach(id => {
+    $(id).addEventListener('click', e => { if (e.target === $(id)) closeOverlay(id); });
+});
+
+// ── Init ─────────────────────────────────────────────────────────
+async function init() {
+    try {
+        const data = await api('GET', '/api/links');
+        links = data.links || [];
+        applySettings(data.settings || {});
+        render();
+    } catch {
+        $('grid').innerHTML = `
+            <div class="state-box error">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                Failed to load — is the API container running?
+            </div>`;
+    }
+}
+
+function applySettings(s) {
+    if (s.title) {
+        document.title       = s.title;
+        $('page-title').textContent = s.title;
+    }
+    if (s.email) {
+        const a = $('footer-email');
+        a.style.display          = '';
+        a.href                   = 'mailto:' + s.email;
+        $('footer-email-txt').textContent = s.email;
+    }
+}
+
+// ── Render ───────────────────────────────────────────────────────
+function render() {
+    const grid = $('grid');
+    grid.innerHTML = '';
+
+    if (links.length === 0 && !editMode) {
+        grid.innerHTML = `
+            <div class="state-box">
+                <i class="fa-solid fa-layer-group"></i>
+                <p>No tiles yet.<br>Click the <strong>edit</strong> button to add your first link.</p>
+            </div>`;
+        return;
+    }
+
+    links.forEach((link, idx) => {
+        const tile = document.createElement('div');
+        tile.className   = 'tile';
+        tile.dataset.id  = link.id;
+        tile.dataset.idx = idx;
+
+        tile.innerHTML = `
+            <div class="tile-bar"></div>
+            <span class="drag-handle"><i class="fa-solid fa-grip-dots-vertical"></i></span>
+            <div class="tile-actions">
+                <button class="tile-act edit-btn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                <button class="tile-act del-btn"  title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+            <div class="tile-header">
+                <span class="tile-label">${esc(link.label)}</span>
+                <span class="tile-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+            ${link.description ? `<div class="tile-desc">${esc(link.description)}</div>` : ''}
+            <div class="tile-url">${esc(link.url)}</div>
+        `;
+
+        tile.querySelector('.edit-btn').addEventListener('click', e => {
+            e.stopPropagation();
+            openEditModal(link.id);
+        });
+
+        tile.querySelector('.del-btn').addEventListener('click', e => {
+            e.stopPropagation();
+            openConfirm(link.id, link.label);
+        });
+
+        if (!editMode) {
+            tile.addEventListener('click', () => {
+                if (link.url.startsWith('http://') || link.url.startsWith('https://')) {
+                    window.open(link.url, '_blank', 'noopener');
+                } else {
+                    window.location.href = link.url;
+                }
+            });
+        }
+
+        tile.draggable = editMode;
+        if (editMode) {
+            tile.addEventListener('dragstart', onDragStart);
+            tile.addEventListener('dragover',  onDragOver);
+            tile.addEventListener('dragleave', onDragLeave);
+            tile.addEventListener('drop',      onDrop);
+            tile.addEventListener('dragend',   onDragEnd);
+        }
+
+        grid.appendChild(tile);
+    });
+
+    // Add-tile button (visible in edit mode via CSS)
+    const add = document.createElement('div');
+    add.className = 'tile tile-add';
+    add.innerHTML = `<i class="fa-solid fa-plus"></i><span>Add Tile</span>`;
+    add.addEventListener('click', openAddModal);
+    grid.appendChild(add);
+}
+
+// ── Edit mode toggle ─────────────────────────────────────────────
+$('btn-edit').addEventListener('click', () => {
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    $('btn-edit').classList.toggle('on', editMode);
+    render();
+});
+
+// ── Link modal ───────────────────────────────────────────────────
+function openAddModal() {
+    editingId = null;
+    $('link-modal-title').innerHTML = '<i class="fa-solid fa-plus"></i>Add Link';
+    $('f-label').value = '';
+    $('f-url').value   = '';
+    $('f-desc').value  = '';
+    openOverlay('link-overlay');
+    $('f-label').focus();
+}
+
+function openEditModal(id) {
+    const link = links.find(l => l.id === id);
+    if (!link) return;
+    editingId = id;
+    $('link-modal-title').innerHTML = '<i class="fa-solid fa-pen"></i>Edit Link';
+    $('f-label').value = link.label;
+    $('f-url').value   = link.url;
+    $('f-desc').value  = link.description || '';
+    openOverlay('link-overlay');
+    $('f-label').focus();
+}
+
+$('link-save').addEventListener('click', async () => {
+    const label = $('f-label').value.trim();
+    const url   = $('f-url').value.trim();
+    const desc  = $('f-desc').value.trim();
+
+    if (!label || !url) { toast('Label and URL are required', 'err'); return; }
+
+    const payload = { label, url, description: desc };
+
+    try {
+        if (editingId) {
+            const updated = await api('PUT', `/api/links/${editingId}`, payload);
+            links = links.map(l => l.id === editingId ? updated : l);
+            toast('Link updated');
+        } else {
+            const created = await api('POST', '/api/links', payload);
+            links.push(created);
+            toast('Link added');
+        }
+        closeOverlay('link-overlay');
+        render();
+    } catch {
+        toast('Failed to save link', 'err');
+    }
+});
+
+// ── Delete ───────────────────────────────────────────────────────
+function openConfirm(id, label) {
+    deletingId = id;
+    $('confirm-label').textContent = label;
+    openOverlay('confirm-overlay');
+}
+
+$('confirm-del').addEventListener('click', async () => {
+    if (!deletingId) return;
+    try {
+        await api('DELETE', `/api/links/${deletingId}`);
+        links = links.filter(l => l.id !== deletingId);
+        toast('Link deleted');
+        render();
+    } catch {
+        toast('Failed to delete link', 'err');
+    }
+    closeOverlay('confirm-overlay');
+    deletingId = null;
+});
+
+// ── Settings ─────────────────────────────────────────────────────
+$('btn-settings').addEventListener('click', async () => {
+    try {
+        const s = await api('GET', '/api/settings');
+        $('s-title').value = s.title || '';
+        $('s-email').value = s.email || '';
+    } catch {}
+    openOverlay('settings-overlay');
+    $('s-title').focus();
+});
+
+$('settings-save').addEventListener('click', async () => {
+    try {
+        const s = await api('PUT', '/api/settings', {
+            title: $('s-title').value.trim(),
+            email: $('s-email').value.trim(),
+        });
+        applySettings(s);
+        toast('Settings saved');
+        closeOverlay('settings-overlay');
+    } catch {
+        toast('Failed to save settings', 'err');
+    }
+});
+
+// ── Drag-to-reorder ──────────────────────────────────────────────
+function onDragStart(e) {
+    dragSrc = parseInt(this.dataset.idx);
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function onDragOver(e) {
+    e.preventDefault();
+    this.classList.add('drag-over');
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function onDragLeave() { this.classList.remove('drag-over'); }
+
+function onDrop(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+    const dest = parseInt(this.dataset.idx);
+    if (dragSrc === null || isNaN(dest) || dragSrc === dest) return;
+    const [moved] = links.splice(dragSrc, 1);
+    links.splice(dest, 0, moved);
+    render();
+    api('POST', '/api/links/reorder', { ids: links.map(l => l.id) })
+        .catch(() => toast('Failed to save order', 'err'));
+}
+
+function onDragEnd() { this.classList.remove('dragging'); }
+
+// ── Keyboard: Escape closes top modal ────────────────────────────
+document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    for (const id of ['confirm-overlay','link-overlay','settings-overlay']) {
+        if ($(id).classList.contains('open')) { closeOverlay(id); break; }
+    }
+});
+
+init();
+</script>
 </body>
 </html>
