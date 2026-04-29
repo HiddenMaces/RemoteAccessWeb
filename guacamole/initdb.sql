@@ -633,6 +633,8 @@ CREATE TABLE guacamole_user_password_history (
 --
 
 -- Create default user "guacadmin" with password "guacadmin"
+-- !! IMPORTANT: Change this password immediately after first login !!
+-- In Guacamole: Settings → Preferences → Change Password
 INSERT INTO guacamole_entity (name, type) VALUES ('guacadmin', 'USER');
 INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date)
 SELECT
