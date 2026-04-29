@@ -1,37 +1,43 @@
 services:
   guacdb:
     container_name: guacamole-db
-    image: mariadb:10.9.5
+    image: mariadb:10.11
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 'MariaDBrootpassword'
-      MYSQL_DATABASE: 'guacamole_db'
-      MYSQL_USER: 'guacamole_user'
-      MYSQL_PASSWORD: 'MariaDBPassword'
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${DB_NAME}
+      MYSQL_USER:          ${DB_USER}
+      MYSQL_PASSWORD:      ${DB_PASSWORD}
     volumes:
       - './guacamole/db-data:/var/lib/mysql'
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   guacd:
     container_name: guacamole-guacd
-    image: guacamole/guacd:1.4.0
+    image: guacamole/guacd:1.5.5
     restart: unless-stopped
 
   guacamole:
     container_name: guacamole
-    image: guacamole/guacamole:1.4.0
+    image: guacamole/guacamole:1.5.5
     restart: unless-stopped
-    ports:
-      - 8080:8080
     environment:
       GUACD_HOSTNAME: "guacd"
       MYSQL_HOSTNAME: "guacdb"
-      MYSQL_DATABASE: "guacamole_db"
-      MYSQL_USER: "guacamole_user"
-      MYSQL_PASSWORD: 'MariaDBPassword'
-      TOTP_ENABLED: "false"
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER:     ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      TOTP_ENABLED:   "false"
     depends_on:
-      - guacdb
-      - guacd
+      guacdb:
+        condition: service_healthy
+      guacd:
+        condition: service_started
 
   ras-api:
     build: ./website/backend
@@ -63,5 +69,3 @@ services:
       ras-api:
         condition: service_healthy
 
-volumes:
-  db-data:
